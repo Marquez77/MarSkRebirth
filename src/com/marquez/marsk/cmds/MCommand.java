@@ -10,6 +10,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.marquez.marsk.Checker;
 import com.marquez.marsk.MarSk;
 import com.marquez.marsk.area.Area;
 import com.marquez.marsk.area.AreaManager;
@@ -23,7 +24,7 @@ public class MCommand implements CommandExecutor{
 		if(sender instanceof Player) {
 			Player p = (Player)sender;
 			if(label.equalsIgnoreCase("marsk")) {
-				String[] update = MarSk.updateCheck();
+				String[] update = Checker.updateCheck();
 				if(update[0].equals(MarSk.version)) update = null;
 				if(p.isOp() && update != null) {
 					p.sendMessage(prefix + "§b§lMarSkRebirth§f의 최신버전이 존재합니다!");

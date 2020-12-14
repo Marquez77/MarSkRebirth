@@ -1,22 +1,12 @@
 ﻿package com.marquez.marsk;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.List;
-
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
@@ -42,7 +32,6 @@ import com.marquez.marsk.Expressions.ExprEnchantLevel;
 import com.marquez.marsk.Expressions.ExprGetWebSource;
 import com.marquez.marsk.Expressions.ExprHealthRegenCause;
 import com.marquez.marsk.Expressions.ExprInPlayers;
-import com.marquez.marsk.Expressions.ExprInventoryType;
 import com.marquez.marsk.Expressions.ExprPlayerAreaName;
 import com.marquez.marsk.Expressions.ExprSortDown;
 import com.marquez.marsk.Expressions.ExprSortUp;
@@ -50,8 +39,10 @@ import com.marquez.marsk.Jump.EvtJump;
 import com.marquez.marsk.Jump.JumpListener;
 import com.marquez.marsk.Jump.PlayerJumpEvent;
 import com.marquez.marsk.area.AreaManager;
+import com.marquez.marsk.area.AreaSelector;
 import com.marquez.marsk.cmds.AreaNameComplete;
 import com.marquez.marsk.cmds.MCommand;
+import com.marquez.marsk.cmds.ScriptsComplete;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.ExpressionType;
@@ -60,8 +51,7 @@ import ch.njol.skript.registrations.EventValues;
 import ch.njol.skript.util.Getter;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class MarSk extends JavaPlugin implements Listener
-{
+public class MarSk extends JavaPlugin implements Listener {
 	public static String prefix = "§f§l[MarSkRebirth]";
 
 	public static MarSk instance;
@@ -71,10 +61,11 @@ public class MarSk extends JavaPlugin implements Listener
 
 	public void onEnable() {
 		instance = this;
-		update = updateCheck();
+		update = Checker.updateCheck();
 		version = getDescription().getVersion();
 		Bukkit.getConsoleSender().sendMessage(prefix + " §a플러그인 활성화 " + "§ev" + getDescription().getVersion() + " §8-Made by Mar(마르)");
 		getServer().getPluginManager().registerEvents(this, this);
+		getServer().getPluginManager().registerEvents(new AreaSelector(), this);
 		Skript.registerAddon((JavaPlugin)this);
 		this.registerEvents();
 		this.registerEffects();
@@ -90,11 +81,15 @@ public class MarSk extends JavaPlugin implements Listener
 		Bukkit.getConsoleSender().sendMessage(prefix + " §c플러그인 비활성화 " + "§ev" + getDescription().getVersion() + " §8-Made by Mar(마르)");
 	}
 
-	public void registercommand(){
+	public void registercommand() {
 		command = new MCommand();
 		getCommand("ska").setExecutor(command);
-		getCommand("ska").setTabCompleter(new AreaNameComplete());;
+		getCommand("ska").setTabCompleter(new AreaNameComplete());
 		getCommand("marsk").setExecutor(command);
+		JavaPlugin skript = (JavaPlugin)Bukkit.getPluginManager().getPlugin("Skript");
+		ScriptsComplete sc = new ScriptsComplete();
+		skript.getCommand("sk").setTabCompleter(sc);
+		skript.getCommand("skript").setTabCompleter(sc);
 	}
 
 	public void registerEvents() {
@@ -154,7 +149,6 @@ public class MarSk extends JavaPlugin implements Listener
 
 	public void registerExpressions() {
 		Skript.registerExpression((Class)ExprHealthRegenCause.class, (Class)String.class, ExpressionType.PROPERTY, new String[] { "regen cause" });
-		Skript.registerExpression((Class)ExprInventoryType.class, (Class)String.class, ExpressionType.PROPERTY, new String[] { "inventory type" });
 		Skript.registerExpression((Class)ExprInPlayers.class, (Class)Player.class, ExpressionType.PROPERTY, new String[] { "players in area %string%" });
 		Skript.registerExpression((Class)ExprPlayerAreaName.class, (Class)String.class, ExpressionType.PROPERTY, new String[] { "[entered ]area of (%entity%|%player%|%location%)" });
 		Skript.registerExpression((Class)ExprAllAreas.class, (Class)String.class, ExpressionType.PROPERTY, new String[] { "all areas" });
@@ -164,35 +158,14 @@ public class MarSk extends JavaPlugin implements Listener
 		Skript.registerExpression((Class)ExprCharAt.class, (Class)Character.class, ExpressionType.PROPERTY, new String[] { "char at %number% in %string%"});
 		Skript.registerExpression((Class)ExprEnchantLevel.class, (Class)Integer.class, ExpressionType.PROPERTY, new String[] { "enchant level of %enchantment% of %itemstacks%" });
 		Skript.registerExpression((Class)ExprGetWebSource.class, (Class)String.class, ExpressionType.PROPERTY, new String[] { "web source of %string%"});
-		Skript.registerExpression((Class)ExprClickNumber.class, (Class)Integer.class, ExpressionType.PROPERTY, new String[] { "click number" });
+		Skript.registerExpression((Class)ExprClickNumber.class, (Class)Integer.class, ExpressionType.PROPERTY, new String[] { "click hotbar number" });
 	}
 
 	public void registerConditions() {
 		Skript.registerCondition((Class)CondIsSymbols.class, new String[] { "%string% contains symbols" });
 		Skript.registerCondition((Class)CondIsInArea.class, new String[] { "(%entity%|%player%|%location%) is in area %string%" });
 	}
-
-	@EventHandler
-	public void select(PlayerInteractEvent e) {
-		Player p = e.getPlayer();
-		if(MCommand.hash.get(p) != null) {
-			if(p.getInventory().getItemInMainHand().getType().equals(Material.AIR)) {
-				e.setCancelled(true);
-				if(e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
-					List<Location> location = MCommand.hash.get(p);
-					location.set(0, e.getClickedBlock().getLocation());
-					MCommand.hash.put(p, location);
-					p.sendMessage(MCommand.prefix + "§e위치 1: " + AreaManager.locationToString(e.getClickedBlock().getLocation()));
-				}else if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-					List<Location> location = MCommand.hash.get(p);
-					location.set(1, e.getClickedBlock().getLocation());
-					MCommand.hash.put(p, location);
-					p.sendMessage(MCommand.prefix + "§e위치 2: " + AreaManager.locationToString(e.getClickedBlock().getLocation()));
-				}
-			}
-		}
-	}
-
+	
 	@EventHandler
 	public void check(final PlayerJoinEvent e) {
 		final Player p = e.getPlayer();
@@ -209,19 +182,5 @@ public class MarSk extends JavaPlugin implements Listener
 				}
 			}, 40L);
 		}
-	}
-	public static String[] updateCheck() {
-		try {
-			URL url = new URL("http://marquezupdate.zz.am");
-			HttpURLConnection uc = (HttpURLConnection)url.openConnection();
-			uc.setRequestMethod("GET");
-			uc.setRequestProperty("User-Agent", "Mozilla/5.0");
-			BufferedReader r = new BufferedReader(new InputStreamReader(uc.getInputStream()));
-			String version = r.readLine();
-			String download_url = r.readLine();
-			return new String[] {version, download_url};
-		}catch (Exception ex) {
-		}
-		return null;
 	}
 }
