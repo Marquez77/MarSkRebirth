@@ -1,0 +1,9 @@
+name: MarSkRebirth
+main: com.marquez.marsk.Main
+version: 1.0.0
+depend: [Skript]
+commands:
+  marsk:
+    description: MarSK's default command
+  ska:
+    description: MarSK addon's area command.
