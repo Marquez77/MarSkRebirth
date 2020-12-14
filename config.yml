@@ -1,0 +1,31 @@
+Events:
+  onHealthRegen: true
+  onEnterArea: true
+  onLeaveArea: true
+  onJump: true
+  onInventoryOpen: true
+  onArmorEquip: true
+  onArmorUnequip: true
+Effects:
+  CreateArea: true
+  RemoveArea: true
+  SpawnStaticItem: true
+Expressions:
+  onHealthRegen: true
+  AreaInPlayers: true
+  EnteredAreaName: true
+  AllAreas: true
+  SortUp: true
+  SortDown: true
+  Decimal: true
+  CharAt: true
+  EnchantLevel: true
+  WebSource: true
+  ClickHotbarNumber: true
+Conditions:
+  ContainsSymbols: true
+  IsInArea: true
+Command:
+  SkaAutoComplete: true
+  SkriptAutoComplete: true
+UpdateCheck: true

@@ -1,5 +1,7 @@
 ﻿package com.marquez.marsk;
 
+import java.io.File;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -8,41 +10,44 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.marquez.marsk.ArmorEquip.ArmorEquipEvent;
-import com.marquez.marsk.ArmorEquip.ArmorEquipListener;
-import com.marquez.marsk.ArmorEquip.ArmorUnEquipEvent;
-import com.marquez.marsk.ArmorEquip.ArmorUnEquipListener;
-import com.marquez.marsk.Conditions.CondIsInArea;
-import com.marquez.marsk.Conditions.CondIsSymbols;
-import com.marquez.marsk.Effects.EffCreateArea;
-import com.marquez.marsk.Effects.EffRemoveArea;
-import com.marquez.marsk.Effects.EffSpawnStaticItem;
-import com.marquez.marsk.Events.EvtEnterArea;
-import com.marquez.marsk.Events.EvtQuitArea;
-import com.marquez.marsk.Expressions.ExprAllAreas;
-import com.marquez.marsk.Expressions.ExprCharAt;
-import com.marquez.marsk.Expressions.ExprClickNumber;
-import com.marquez.marsk.Expressions.ExprDecimal;
-import com.marquez.marsk.Expressions.ExprEnchantLevel;
-import com.marquez.marsk.Expressions.ExprGetWebSource;
-import com.marquez.marsk.Expressions.ExprHealthRegenCause;
-import com.marquez.marsk.Expressions.ExprInPlayers;
-import com.marquez.marsk.Expressions.ExprPlayerAreaName;
-import com.marquez.marsk.Expressions.ExprSortDown;
-import com.marquez.marsk.Expressions.ExprSortUp;
-import com.marquez.marsk.Jump.EvtJump;
-import com.marquez.marsk.Jump.JumpListener;
-import com.marquez.marsk.Jump.PlayerJumpEvent;
 import com.marquez.marsk.area.AreaManager;
-import com.marquez.marsk.area.AreaSelector;
+import com.marquez.marsk.area.events.PlayerEnterAreaEvent;
+import com.marquez.marsk.area.events.PlayerLeaveAreaEvent;
+import com.marquez.marsk.area.listeners.AreaSelector;
+import com.marquez.marsk.area.listeners.PlayerAreaListener;
+import com.marquez.marsk.armorequip.ArmorEquipEvent;
+import com.marquez.marsk.armorequip.ArmorEquipListener;
+import com.marquez.marsk.armorequip.ArmorUnEquipEvent;
+import com.marquez.marsk.armorequip.ArmorUnEquipListener;
 import com.marquez.marsk.cmds.AreaNameComplete;
 import com.marquez.marsk.cmds.MCommand;
 import com.marquez.marsk.cmds.ScriptsComplete;
+import com.marquez.marsk.conditions.CondIsInArea;
+import com.marquez.marsk.conditions.CondIsSymbols;
+import com.marquez.marsk.effects.EffCreateArea;
+import com.marquez.marsk.effects.EffRemoveArea;
+import com.marquez.marsk.effects.EffSpawnStaticItem;
+import com.marquez.marsk.events.EvtEnterArea;
+import com.marquez.marsk.events.EvtLeaveArea;
+import com.marquez.marsk.expressions.ExprAllAreas;
+import com.marquez.marsk.expressions.ExprCharAt;
+import com.marquez.marsk.expressions.ExprClickNumber;
+import com.marquez.marsk.expressions.ExprDecimal;
+import com.marquez.marsk.expressions.ExprEnchantLevel;
+import com.marquez.marsk.expressions.ExprEventArea;
+import com.marquez.marsk.expressions.ExprGetWebSource;
+import com.marquez.marsk.expressions.ExprHealthRegenCause;
+import com.marquez.marsk.expressions.ExprInPlayers;
+import com.marquez.marsk.expressions.ExprPlayerAreaName;
+import com.marquez.marsk.expressions.ExprSortDown;
+import com.marquez.marsk.expressions.ExprSortUp;
+import com.marquez.marsk.jump.EvtJump;
+import com.marquez.marsk.jump.JumpListener;
+import com.marquez.marsk.jump.PlayerJumpEvent;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.ExpressionType;
@@ -57,15 +62,19 @@ public class MarSk extends JavaPlugin implements Listener {
 	public static MarSk instance;
 	public static String version;
 	public MCommand command;
-	public String[] update;
 
 	public void onEnable() {
 		instance = this;
-		update = Checker.updateCheck();
 		version = getDescription().getVersion();
 		Bukkit.getConsoleSender().sendMessage(prefix + " §a플러그인 활성화 " + "§ev" + getDescription().getVersion() + " §8-Made by Mar(마르)");
+		File file = new File(getDataFolder(), "config.yml");
+		if(!file.exists()) {
+			getConfig().options().copyDefaults(true);
+			saveDefaultConfig();
+		}
 		getServer().getPluginManager().registerEvents(this, this);
 		getServer().getPluginManager().registerEvents(new AreaSelector(), this);
+		getServer().getPluginManager().registerEvents(new PlayerAreaListener(), this);
 		Skript.registerAddon((JavaPlugin)this);
 		this.registerEvents();
 		this.registerEffects();
@@ -84,88 +93,125 @@ public class MarSk extends JavaPlugin implements Listener {
 	public void registercommand() {
 		command = new MCommand();
 		getCommand("ska").setExecutor(command);
-		getCommand("ska").setTabCompleter(new AreaNameComplete());
-		getCommand("marsk").setExecutor(command);
-		JavaPlugin skript = (JavaPlugin)Bukkit.getPluginManager().getPlugin("Skript");
-		ScriptsComplete sc = new ScriptsComplete();
-		skript.getCommand("sk").setTabCompleter(sc);
-		skript.getCommand("skript").setTabCompleter(sc);
+		if(getOptions("Command.SkaAutoComplete")) getCommand("ska").setTabCompleter(new AreaNameComplete());
+		if(getOptions("UpdateCheck")) getCommand("marsk").setExecutor(command);
+		if(getOptions("Command.SkriptAutoComplete")) { 
+			JavaPlugin skript = (JavaPlugin)Bukkit.getPluginManager().getPlugin("Skript");
+			ScriptsComplete sc = new ScriptsComplete();
+			skript.getCommand("sk").setTabCompleter(sc);
+			skript.getCommand("skript").setTabCompleter(sc);
+		}
+	}
+
+	public static boolean getOptions(String option) {
+		if(!instance.getConfig().isSet(option)) {
+			instance.getConfig().set(option, true);
+			instance.saveConfig();
+		}
+		return instance.getConfig().getBoolean(option);
 	}
 
 	public void registerEvents() {
-		Skript.registerEvent("entity health regen", (Class)SimpleEvent.class, (Class)EntityRegainHealthEvent.class, new String[] { "entity health regen" });
-		EventValues.registerEventValue((Class)EntityRegainHealthEvent.class, (Class)Entity.class, (Getter)new Getter<Entity, EntityRegainHealthEvent>() {
-			public Entity get(final EntityRegainHealthEvent event) {
-				final Entity e = event.getEntity();
-				return e;
-			}
-		}, 0);
-		EventValues.registerEventValue((Class)EntityRegainHealthEvent.class, (Class)Number.class, (Getter)new Getter<Number, EntityRegainHealthEvent>() {
-			public Number get(final EntityRegainHealthEvent event) {
-				final Number n = ((double)event.getAmount()/2.0);
-				return n;
-			}
-		}, 0);
-		Skript.registerEvent("enter area", (Class)EvtEnterArea.class, (Class)PlayerMoveEvent.class, new String[] { "(enter|join) area[ at %string%]" });
-		Skript.registerEvent("quit area", (Class)EvtQuitArea.class, (Class)PlayerMoveEvent.class, new String[] { "(exit|quit|leave) area[ at %string%]" });
-		Skript.registerEvent("mar.jump", (Class)EvtJump.class, (Class)PlayerJumpEvent.class, new String[] { "[mar.]jump" });
-		EventValues.registerEventValue((Class)PlayerJumpEvent.class, (Class)Player.class, (Getter)new Getter<Player, PlayerJumpEvent>() {
-			public Player get(final PlayerJumpEvent e) {
-				final Player p = (Player)e.getPlayer();
-				return p;
-			}
-		}, 0);
-		new JumpListener(this);
-		Skript.registerEvent("mar.inventory open", (Class)SimpleEvent.class, (Class)InventoryOpenEvent.class, new String[] { "[mar.]inventory open" });
-		EventValues.registerEventValue((Class)InventoryOpenEvent.class, (Class)Player.class, (Getter)new Getter<Player, InventoryOpenEvent>() {
-			public Player get(final InventoryOpenEvent e) {
-				final Player p = (Player)e.getPlayer();
-				return p;
-			}
-		}, 0);
-		Skript.registerEvent("armor equip", (Class)SimpleEvent.class, (Class)ArmorEquipEvent.class, new String[] { "(armor|armour) equip" });
-		EventValues.registerEventValue((Class)ArmorEquipEvent.class, (Class)ItemStack.class, (Getter)new Getter<ItemStack, ArmorEquipEvent>() {
-			public ItemStack get(final ArmorEquipEvent e) {
-				final ItemStack item = e.getItem();
-				return item;
-			}
-		}, 0);
-		new ArmorEquipListener(null, (Plugin)this);
-		Skript.registerEvent("armor unequip", (Class)SimpleEvent.class, (Class)ArmorUnEquipEvent.class, new String[] { "(armor|armour) unequip" });
-		EventValues.registerEventValue((Class)ArmorUnEquipEvent.class, (Class)ItemStack.class, (Getter)new Getter<ItemStack, ArmorUnEquipEvent>() {
-			public ItemStack get(final ArmorUnEquipEvent e) {
-				final ItemStack item = e.getItem();
-				return item;
-			}
-		}, 0);
-		new ArmorUnEquipListener(null, (Plugin)this);
+		if(getOptions("Events.onHealthRegen")) {
+			Skript.registerEvent("entity health regen", (Class)SimpleEvent.class, (Class)EntityRegainHealthEvent.class, new String[] { "entity health regen" });
+			EventValues.registerEventValue((Class)EntityRegainHealthEvent.class, (Class)Entity.class, (Getter)new Getter<Entity, EntityRegainHealthEvent>() {
+				public Entity get(final EntityRegainHealthEvent event) {
+					final Entity e = event.getEntity();
+					return e;
+				}
+			}, 0);
+			EventValues.registerEventValue((Class)EntityRegainHealthEvent.class, (Class)Number.class, (Getter)new Getter<Number, EntityRegainHealthEvent>() {
+				public Number get(final EntityRegainHealthEvent event) {
+					final Number n = ((double)event.getAmount()/2.0);
+					return n;
+				}
+			}, 0);
+		}
+		if(getOptions("Events.onEnterArea")) {
+			Skript.registerEvent("enter area", (Class)EvtEnterArea.class, (Class)PlayerEnterAreaEvent.class, new String[] { "(enter|join) area[ at %string%]" });
+			EventValues.registerEventValue((Class)PlayerEnterAreaEvent.class, (Class)Player.class, (Getter)new Getter<Player, PlayerEnterAreaEvent>() {
+				public Player get(final PlayerEnterAreaEvent e) {
+					final Player p = (Player)e.getPlayer();
+					return p;
+				}
+			}, 0);
+		}
+		if(getOptions("Events.onLeaveArea")) {
+			Skript.registerEvent("quit area", (Class)EvtLeaveArea.class, (Class)PlayerLeaveAreaEvent.class, new String[] { "(exit|quit|leave) area[ at %string%]" });
+			EventValues.registerEventValue((Class)PlayerLeaveAreaEvent.class, (Class)Player.class, (Getter)new Getter<Player, PlayerLeaveAreaEvent>() {
+				public Player get(final PlayerLeaveAreaEvent e) {
+					final Player p = (Player)e.getPlayer();
+					return p;
+				}
+			}, 0);
+		}
+		if(getOptions("Events.onJump")) {
+			Skript.registerEvent("mar.jump", (Class)EvtJump.class, (Class)PlayerJumpEvent.class, new String[] { "[mar.]jump" });
+			EventValues.registerEventValue((Class)PlayerJumpEvent.class, (Class)Player.class, (Getter)new Getter<Player, PlayerJumpEvent>() {
+				public Player get(final PlayerJumpEvent e) {
+					final Player p = (Player)e.getPlayer();
+					return p;
+				}
+			}, 0);
+			new JumpListener(this);
+		}
+		if(getOptions("Events.onInventoryOpen")) {
+			Skript.registerEvent("mar.inventory open", (Class)SimpleEvent.class, (Class)InventoryOpenEvent.class, new String[] { "[mar.]inventory open" });
+			EventValues.registerEventValue((Class)InventoryOpenEvent.class, (Class)Player.class, (Getter)new Getter<Player, InventoryOpenEvent>() {
+				public Player get(final InventoryOpenEvent e) {
+					final Player p = (Player)e.getPlayer();
+					return p;
+				}
+			}, 0);
+		}
+		if(getOptions("Events.onArmorEquip")) {
+			Skript.registerEvent("armor equip", (Class)SimpleEvent.class, (Class)ArmorEquipEvent.class, new String[] { "(armor|armour) equip" });
+			EventValues.registerEventValue((Class)ArmorEquipEvent.class, (Class)ItemStack.class, (Getter)new Getter<ItemStack, ArmorEquipEvent>() {
+				public ItemStack get(final ArmorEquipEvent e) {
+					final ItemStack item = e.getItem();
+					return item;
+				}
+			}, 0);
+			new ArmorEquipListener(null, (Plugin)this);
+		}
+		if(getOptions("Events.onArmorUnequip")) {
+			Skript.registerEvent("armor unequip", (Class)SimpleEvent.class, (Class)ArmorUnEquipEvent.class, new String[] { "(armor|armour) unequip" });
+			EventValues.registerEventValue((Class)ArmorUnEquipEvent.class, (Class)ItemStack.class, (Getter)new Getter<ItemStack, ArmorUnEquipEvent>() {
+				public ItemStack get(final ArmorUnEquipEvent e) {
+					final ItemStack item = e.getItem();
+					return item;
+				}
+			}, 0);
+			new ArmorUnEquipListener(null, (Plugin)this);
+		}
 	}
 
 	public void registerEffects() {
-		Skript.registerEffect((Class)EffCreateArea.class, new String[] { "create area of %string% at %location%, %location%" });
-		Skript.registerEffect((Class)EffRemoveArea.class, new String[] { "(remove|delete) area of %string%" });
-		Skript.registerEffect((Class)EffSpawnStaticItem.class, new String[] { "spawn static item %itemstacks% at %location%" });
+		if(getOptions("Effects.CreateArea")) Skript.registerEffect((Class)EffCreateArea.class, new String[] { "create area of %string% at %location%, %location%" });
+		if(getOptions("Effects.RemoveArea")) Skript.registerEffect((Class)EffRemoveArea.class, new String[] { "(remove|delete) area of %string%" });
+		if(getOptions("Effects.SpawnStaticItem")) Skript.registerEffect((Class)EffSpawnStaticItem.class, new String[] { "spawn static item %itemstacks% at %location%" });
 	}
 
 	public void registerExpressions() {
-		Skript.registerExpression((Class)ExprHealthRegenCause.class, (Class)String.class, ExpressionType.PROPERTY, new String[] { "regen cause" });
-		Skript.registerExpression((Class)ExprInPlayers.class, (Class)Player.class, ExpressionType.PROPERTY, new String[] { "players in area %string%" });
-		Skript.registerExpression((Class)ExprPlayerAreaName.class, (Class)String.class, ExpressionType.PROPERTY, new String[] { "[entered ]area of (%entity%|%player%|%location%)" });
-		Skript.registerExpression((Class)ExprAllAreas.class, (Class)String.class, ExpressionType.PROPERTY, new String[] { "all areas" });
-		Skript.registerExpression((Class)ExprSortUp.class, (Class)Number.class, ExpressionType.PROPERTY, new String[] { "sort up %numbers%" });
-		Skript.registerExpression((Class)ExprSortDown.class, (Class)Number.class, ExpressionType.PROPERTY, new String[] { "sort down %numbers%" });
-		Skript.registerExpression((Class)ExprDecimal.class, (Class)Number.class, ExpressionType.PROPERTY, new String[] { "decimal with %integer% in %number%" });
-		Skript.registerExpression((Class)ExprCharAt.class, (Class)Character.class, ExpressionType.PROPERTY, new String[] { "char at %number% in %string%"});
-		Skript.registerExpression((Class)ExprEnchantLevel.class, (Class)Integer.class, ExpressionType.PROPERTY, new String[] { "enchant level of %enchantment% of %itemstacks%" });
-		Skript.registerExpression((Class)ExprGetWebSource.class, (Class)String.class, ExpressionType.PROPERTY, new String[] { "web source of %string%"});
-		Skript.registerExpression((Class)ExprClickNumber.class, (Class)Integer.class, ExpressionType.PROPERTY, new String[] { "click hotbar number" });
+		if(getOptions("Expressions.onHealthRegen")) Skript.registerExpression((Class)ExprHealthRegenCause.class, (Class)String.class, ExpressionType.PROPERTY, new String[] { "regen cause" });
+		if(getOptions("Expressions.AreaInPlayers")) Skript.registerExpression((Class)ExprInPlayers.class, (Class)Player.class, ExpressionType.PROPERTY, new String[] { "players in area %string%" });
+		if(getOptions("Expressions.EnteredAreaName")) Skript.registerExpression((Class)ExprPlayerAreaName.class, (Class)String.class, ExpressionType.PROPERTY, new String[] { "[entered ]area of %location%" });
+		if(getOptions("Events.onEnterArea") || getOptions("Events.onLeaveArea")) Skript.registerExpression((Class)ExprEventArea.class, (Class)String.class, ExpressionType.PROPERTY, new String[] { "event-area" });
+		if(getOptions("Expressions.AllAreas")) Skript.registerExpression((Class)ExprAllAreas.class, (Class)String.class, ExpressionType.PROPERTY, new String[] { "all areas" });
+		if(getOptions("Expressions.SortUp")) Skript.registerExpression((Class)ExprSortUp.class, (Class)Number.class, ExpressionType.PROPERTY, new String[] { "sort up %numbers%" });
+		if(getOptions("Expressions.SortDown")) Skript.registerExpression((Class)ExprSortDown.class, (Class)Number.class, ExpressionType.PROPERTY, new String[] { "sort down %numbers%" });
+		if(getOptions("Expressions.Decimal")) Skript.registerExpression((Class)ExprDecimal.class, (Class)Number.class, ExpressionType.PROPERTY, new String[] { "decimal with %integer% in %number%" });
+		if(getOptions("Expressions.CharAt")) Skript.registerExpression((Class)ExprCharAt.class, (Class)Character.class, ExpressionType.PROPERTY, new String[] { "char at %number% in %string%"});
+		if(getOptions("Expressions.EnchantLevel")) Skript.registerExpression((Class)ExprEnchantLevel.class, (Class)Integer.class, ExpressionType.PROPERTY, new String[] { "enchant level of %enchantment% of %itemstacks%" });
+		if(getOptions("Expressions.WebSource")) Skript.registerExpression((Class)ExprGetWebSource.class, (Class)String.class, ExpressionType.PROPERTY, new String[] { "web source of %string%"});
+		if(getOptions("Expressions.ClickHotbarNumber")) Skript.registerExpression((Class)ExprClickNumber.class, (Class)Integer.class, ExpressionType.PROPERTY, new String[] { "click hotbar number" });
 	}
 
 	public void registerConditions() {
-		Skript.registerCondition((Class)CondIsSymbols.class, new String[] { "%string% contains symbols" });
-		Skript.registerCondition((Class)CondIsInArea.class, new String[] { "(%entity%|%player%|%location%) is in area %string%" });
+		if(getOptions("Conditions.ContainsSymbols")) Skript.registerCondition((Class)CondIsSymbols.class, new String[] { "%string% contains symbols" });
+		if(getOptions("Conditions.IsInArea")) Skript.registerCondition((Class)CondIsInArea.class, new String[] { "%location% is in area %string%" });
 	}
-	
+
 	@EventHandler
 	public void check(final PlayerJoinEvent e) {
 		final Player p = e.getPlayer();
