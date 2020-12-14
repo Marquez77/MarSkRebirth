@@ -34,9 +34,9 @@ import com.marquez.marsk.Effects.EffRemoveArea;
 import com.marquez.marsk.Effects.EffSpawnStaticItem;
 import com.marquez.marsk.Events.EvtEnterArea;
 import com.marquez.marsk.Events.EvtQuitArea;
+import com.marquez.marsk.Expressions.ExprAllAreas;
 import com.marquez.marsk.Expressions.ExprCharAt;
 import com.marquez.marsk.Expressions.ExprClickNumber;
-import com.marquez.marsk.Expressions.ExprClickType;
 import com.marquez.marsk.Expressions.ExprDecimal;
 import com.marquez.marsk.Expressions.ExprEnchantLevel;
 import com.marquez.marsk.Expressions.ExprGetWebSource;
@@ -44,7 +44,6 @@ import com.marquez.marsk.Expressions.ExprHealthRegenCause;
 import com.marquez.marsk.Expressions.ExprInPlayers;
 import com.marquez.marsk.Expressions.ExprInventoryType;
 import com.marquez.marsk.Expressions.ExprPlayerAreaName;
-import com.marquez.marsk.Expressions.ExprSlotType;
 import com.marquez.marsk.Expressions.ExprSortDown;
 import com.marquez.marsk.Expressions.ExprSortUp;
 import com.marquez.marsk.Jump.EvtJump;
@@ -79,18 +78,19 @@ public class Main extends JavaPlugin implements Listener
 		this.registerExpressions();
 		this.registerConditions();
 		registercommand();
-		AreaFile.loadArea();
+		AreaManager.loadArea();
 		Bukkit.getConsoleSender().sendMessage(prefix + " §a에드온 연결 완료 §8-Made by Mar(마르)");
 	}
 
 	public void onDisable() {
-		AreaFile.saveArea();
+		AreaManager.saveArea();
 		Bukkit.getConsoleSender().sendMessage(prefix + " §c플러그인 비활성화 " + "§ev" + getDescription().getVersion() + " §8-Made by Mar(마르)");
 	}
 
 	public void registercommand(){
 		command = new MCommand();
 		getCommand("ska").setExecutor(command);
+		getCommand("ska").setTabCompleter(new AreaNameComplete());;
 		getCommand("marsk").setExecutor(command);
 	}
 
@@ -151,11 +151,10 @@ public class Main extends JavaPlugin implements Listener
 
 	public void registerExpressions() {
 		Skript.registerExpression((Class)ExprHealthRegenCause.class, (Class)String.class, ExpressionType.PROPERTY, new String[] { "regen cause" });
-		Skript.registerExpression((Class)ExprClickType.class, (Class)String.class, ExpressionType.PROPERTY, new String[] { "click type" });
-		Skript.registerExpression((Class)ExprSlotType.class, (Class)String.class, ExpressionType.PROPERTY, new String[] { "slot type" });
 		Skript.registerExpression((Class)ExprInventoryType.class, (Class)String.class, ExpressionType.PROPERTY, new String[] { "inventory type" });
 		Skript.registerExpression((Class)ExprInPlayers.class, (Class)Player.class, ExpressionType.PROPERTY, new String[] { "players in area %string%" });
 		Skript.registerExpression((Class)ExprPlayerAreaName.class, (Class)String.class, ExpressionType.PROPERTY, new String[] { "[entered ]area of (%entity%|%player%|%location%)" });
+		Skript.registerExpression((Class)ExprAllAreas.class, (Class)String.class, ExpressionType.PROPERTY, new String[] { "all areas" });
 		Skript.registerExpression((Class)ExprSortUp.class, (Class)Number.class, ExpressionType.PROPERTY, new String[] { "sort up %numbers%" });
 		Skript.registerExpression((Class)ExprSortDown.class, (Class)Number.class, ExpressionType.PROPERTY, new String[] { "sort down %numbers%" });
 		Skript.registerExpression((Class)ExprDecimal.class, (Class)Number.class, ExpressionType.PROPERTY, new String[] { "decimal with %integer% in %number%" });
@@ -180,12 +179,12 @@ public class Main extends JavaPlugin implements Listener
 					List<Location> location = MCommand.hash.get(p);
 					location.set(0, e.getClickedBlock().getLocation());
 					MCommand.hash.put(p, location);
-					p.sendMessage(MCommand.prefix + "§e위치 1: " + AreaFile.locationToString(e.getClickedBlock().getLocation()));
+					p.sendMessage(MCommand.prefix + "§e위치 1: " + AreaManager.locationToString(e.getClickedBlock().getLocation()));
 				}else if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 					List<Location> location = MCommand.hash.get(p);
 					location.set(1, e.getClickedBlock().getLocation());
 					MCommand.hash.put(p, location);
-					p.sendMessage(MCommand.prefix + "§e위치 2: " + AreaFile.locationToString(e.getClickedBlock().getLocation()));
+					p.sendMessage(MCommand.prefix + "§e위치 2: " + AreaManager.locationToString(e.getClickedBlock().getLocation()));
 				}
 			}
 		}

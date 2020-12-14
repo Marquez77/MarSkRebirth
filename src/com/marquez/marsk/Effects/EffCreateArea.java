@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 import org.bukkit.Location;
 import org.bukkit.event.Event;
 
-import com.marquez.marsk.AreaFile;
+import com.marquez.marsk.AreaManager;
 
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
@@ -37,6 +37,6 @@ public class EffCreateArea extends Effect{
     	final Location loc1 = (Location)this.loc1.getSingle(arg0);
     	final Location loc2 = (Location)this.loc2.getSingle(arg0);
     	List<Location> locs = Arrays.asList(loc1, loc2);
-    	AreaFile.createArea(name, locs);
+    	AreaManager.createArea(name, locs);
     }
 }

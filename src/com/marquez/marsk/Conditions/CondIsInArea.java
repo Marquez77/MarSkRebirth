@@ -6,7 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
 
-import com.marquez.marsk.AreaFile;
+import com.marquez.marsk.AreaManager;
 import com.marquez.marsk.Locations;
 
 import ch.njol.skript.lang.Condition;
@@ -33,7 +33,7 @@ public class CondIsInArea extends Condition{
 	public boolean check(Event arg0) {
 		final String area = this.area.getSingle(arg0);
 		final Object obj = this.object.getSingle(arg0);
-    	if(AreaFile.findArea((area)) == -1) {
+    	if(AreaManager.findArea((area)) == -1) {
 			return false;
 		}
     	Location loc = null;
@@ -43,6 +43,6 @@ public class CondIsInArea extends Condition{
     		loc = (Location)obj;
     	}
     	if(loc == null) return false;
-		return Locations.isInPosition(new Locations(AreaFile.foundArea(area)), loc);
+		return Locations.isInPosition(new Locations(AreaManager.foundArea(area)), loc);
 	}
 }

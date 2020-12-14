@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-import com.marquez.marsk.AreaFile;
+import com.marquez.marsk.AreaManager;
 import com.marquez.marsk.Locations;
 
 import ch.njol.skript.lang.Expression;
@@ -30,7 +30,7 @@ public class EvtQuitArea extends SkriptEvent{
 	@Override
 	public boolean check(final Event arg0) {
 		String area = (String)this.area.getSingle(arg0);
-		if(AreaFile.findArea(area) == -1) {
+		if(AreaManager.findArea(area) == -1) {
 			return false;
 		}
 		return this.area.check(arg0, new Checker<String>() {
@@ -52,11 +52,11 @@ public class EvtQuitArea extends SkriptEvent{
 		if(Locations.playerArea_b.get(p) == null) {
 			Locations.playerArea_b.put(p, new ArrayList<String>());
 		}
-		if(AreaFile.findArea(area) == -1) {
+		if(AreaManager.findArea(area) == -1) {
 			return false;
 		}
 		List<String> arealist = Locations.playerArea_b.get(p);
-		if(!Locations.isInPosition(new Locations(AreaFile.foundArea(area)), p.getLocation())) {
+		if(!Locations.isInPosition(new Locations(AreaManager.foundArea(area)), p.getLocation())) {
 			if(Locations.playerArea_b.get(p).contains(area)) {
 				arealist.remove(area);
 				Locations.playerArea_b.put(p, arealist);

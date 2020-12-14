@@ -13,9 +13,21 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-public class AreaFile {
+public class AreaManager {
 	
-	public static List<Area> areaArray = new ArrayList<Area>();
+	private static List<Area> areaArray = new ArrayList<Area>();
+	
+	public static List<Area> getAreas() {
+		return new ArrayList<Area>(areaArray);
+	}
+	
+	public static List<String> getAreaNames() {
+		List<String> array = new ArrayList<String>();
+		for(Area area : areaArray) {
+			array.add(area.getName());
+		}
+		return array;
+	}
 
 	public static boolean createArea(String name, List<Location> location) {
 		if(location.get(0).getWorld().equals(location.get(1).getWorld())

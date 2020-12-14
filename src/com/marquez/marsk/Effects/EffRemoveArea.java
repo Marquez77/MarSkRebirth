@@ -4,7 +4,7 @@ import javax.annotation.Nullable;
 
 import org.bukkit.event.Event;
 
-import com.marquez.marsk.AreaFile;
+import com.marquez.marsk.AreaManager;
 
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
@@ -26,6 +26,6 @@ public class EffRemoveArea extends Effect{
     
     protected void execute(final Event arg0) {
     	final String name = (String)this.name.getSingle(arg0);
-    	AreaFile.deleteArea(name);
+    	AreaManager.deleteArea(name);
     }
 }

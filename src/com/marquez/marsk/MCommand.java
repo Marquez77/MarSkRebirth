@@ -1,4 +1,4 @@
-package com.marquez.marsk;
+ï»¿package com.marquez.marsk;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 public class MCommand implements CommandExecutor{
 	
 	public static HashMap<Player, List<Location>> hash = new HashMap<Player, List<Location>>();
-	public static String prefix = "¡×b¡×l[MarSK] ";
+	public static String prefix = "Â§bÂ§l[MarSkRebirth] ";
 	
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(sender instanceof Player) {
@@ -22,23 +22,23 @@ public class MCommand implements CommandExecutor{
 				String[] update = Main.updateCheck();
 				if(update[0].equals(Main.version)) update = null;
 				if(p.isOp() && update != null) {
-					p.sendMessage(prefix + "¡×b¡×lMarSKÀÇ ÃÖ½Å¹öÀüÀÌ Á¸ÀçÇÕ´Ï´Ù!");
-					p.sendMessage(prefix + "¡×aÃÖ½Å¹öÀü¡×7:¡×ev" + update[0] + " ¡×cÇöÀç¹öÀü¡×7:¡×ev" + Main.version);
-					p.sendMessage(prefix + "¡×6´Ù¿î·Îµå ¸µÅ© ¡×7: ¡×f" + update[1]);
-					p.sendMessage(prefix + "¡×7(ÇØ´ç ¸Ş¼¼Áö´Â OP¿¡°Ô¸¸ Ãâ·ÂµË´Ï´Ù)");
+					p.sendMessage(prefix + "Â§bÂ§lMarSkRebirthì˜ ìµœì‹ ë²„ì „ì´ ì¡´ì¬í•©ë‹ˆë‹¤!");
+					p.sendMessage(prefix + "Â§aìµœì‹ ë²„ì „Â§7:Â§ev" + update[0] + " Â§cí˜„ì¬ë²„ì „Â§7:Â§ev" + Main.version);
+					p.sendMessage(prefix + "Â§6ë‹¤ìš´ë¡œë“œ ë§í¬ Â§7: Â§f" + update[1]);
+					p.sendMessage(prefix + "Â§7(í•´ë‹¹ ë©”ì„¸ì§€ëŠ” OPì—ê²Œë§Œ ì¶œë ¥ë©ë‹ˆë‹¤)");
 				}else {
-					p.sendMessage(prefix + "¡×aÇöÀç¹öÀü¡×7:¡×ev" + Main.version);
+					p.sendMessage(prefix + "Â§aí˜„ì¬ë²„ì „Â§7:Â§ev" + Main.version);
 				}
 			}
 			if(label.equalsIgnoreCase("ska")) {
 				if(p.isOp()) {
 					if(args.length == 0) {
-						p.sendMessage(prefix + "¡×f¡×l/ska select ¡×7¡×l- ±¸¿ªÀ» ¼±ÅÃÇÕ´Ï´Ù. [On/Off]");
-						p.sendMessage(prefix + "¡×f¡×l/ska create [ÀÌ¸§] ¡×7¡×l- ±¸¿ªÀ» »ı¼ºÇÕ´Ï´Ù.");
-						p.sendMessage(prefix + "¡×f¡×l/ska delete [ÀÌ¸§] ¡×7¡×l- ±¸¿ªÀ» »èÁ¦ÇÕ´Ï´Ù.");
-						p.sendMessage(prefix + "¡×f¡×l/ska list ¡×7¡×l- ¸ñ·ÏÀ» È®ÀÎÇÕ´Ï´Ù.");
-						p.sendMessage(prefix + "¡×f¡×l/ska save ¡×7¡×l- µ¥ÀÌÅÍ¸¦ ÀúÀåÇÕ´Ï´Ù.");
-						p.sendMessage(prefix + "¡×f¡×l/ska load ¡×7¡×l- µ¥ÀÌÅÍ¸¦ ºÒ·¯¿É´Ï´Ù.");
+						p.sendMessage(prefix + "Â§fÂ§l/ska select Â§7Â§l- êµ¬ì—­ì„ ì„ íƒí•©ë‹ˆë‹¤. [On/Off]");
+						p.sendMessage(prefix + "Â§fÂ§l/ska create [ì´ë¦„] Â§7Â§l- êµ¬ì—­ì„ ìƒì„±í•©ë‹ˆë‹¤.");
+						p.sendMessage(prefix + "Â§fÂ§l/ska delete [ì´ë¦„] Â§7Â§l- êµ¬ì—­ì„ ì‚­ì œí•©ë‹ˆë‹¤.");
+						p.sendMessage(prefix + "Â§fÂ§l/ska list Â§7Â§l- ëª©ë¡ì„ í™•ì¸í•©ë‹ˆë‹¤.");
+						p.sendMessage(prefix + "Â§fÂ§l/ska save Â§7Â§l- ë°ì´í„°ë¥¼ ì €ì¥í•©ë‹ˆë‹¤.");
+						p.sendMessage(prefix + "Â§fÂ§l/ska load Â§7Â§l- ë°ì´í„°ë¥¼ ë¶ˆëŸ¬ì˜µë‹ˆë‹¤.");
 					}else{
 						switch(args[0]) {
 						case "select":
@@ -47,64 +47,64 @@ public class MCommand implements CommandExecutor{
 								location.add(null);
 								location.add(null);
 								hash.put(p, location);
-								p.sendMessage(prefix + "¡×e¸Ç¼ÕÀ¸·Î ¿ìÅ¬¸¯, ÁÂÅ¬¸¯À» ÇÏ¿© ±¸¿ªÀ» ¼³Á¤ÇØÁÖ¼¼¿ä.");
+								p.sendMessage(prefix + "Â§eë§¨ì†ìœ¼ë¡œ ìš°í´ë¦­, ì¢Œí´ë¦­ì„ í•˜ì—¬ êµ¬ì—­ì„ ì„¤ì •í•´ì£¼ì„¸ìš”.");
 							}else{
 								hash.remove(p);
-								p.sendMessage(prefix + "¡×c±¸¿ª ¼±ÅÃ ¸ğµå°¡ ÇØÁ¦µÇ¾ú½À´Ï´Ù.");
+								p.sendMessage(prefix + "Â§cêµ¬ì—­ ì„ íƒ ëª¨ë“œê°€ í•´ì œë˜ì—ˆìŠµë‹ˆë‹¤.");
 							}
 							break;
 						case "create":
 							if(args.length >= 2) {
 								if(hash.get(p) == null) {
-									p.sendMessage(prefix + "¡×cÀ§Ä¡¸¦ ÁöÁ¤ÇÏÁö ¾Ê¾Ò½À´Ï´Ù.");
+									p.sendMessage(prefix + "Â§cìœ„ì¹˜ë¥¼ ì§€ì •í•˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
 									break;
 								}
 								if(hash.get(p).get(0) == null) {
-									p.sendMessage(prefix + "¡×cÀ§Ä¡ 1ÀÌ ÁöÁ¤µÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+									p.sendMessage(prefix + "Â§cìœ„ì¹˜ 1ì´ ì§€ì •ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
 									break;
 								}else if(hash.get(p).get(1) == null) {
-									p.sendMessage(prefix + "¡×cÀ§Ä¡ 2°¡ ÁöÁ¤µÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+									p.sendMessage(prefix + "Â§cìœ„ì¹˜ 2ê°€ ì§€ì •ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
 									break;
 								}
-								if(AreaFile.createArea(args[1], hash.get(p))) {
-									p.sendMessage(prefix + "¡×a±¸¿ª \'" + args[1] + "\' ¸¦ »ı¼ºÇÏ¿´½À´Ï´Ù.");
+								if(AreaManager.createArea(args[1], hash.get(p))) {
+									p.sendMessage(prefix + "Â§aêµ¬ì—­ \'" + args[1] + "\' ë¥¼ ìƒì„±í•˜ì˜€ìŠµë‹ˆë‹¤.");
 									hash.remove(p);
 								}else{
-									p.sendMessage(prefix + "¡×cÀÌ¸§ÀÌ ÀÌ¹Ì Á¸ÀçÇÏ°Å³ª, ±¸¿ª ¼³Á¤ÀÌ ¿Ã¹Ù¸£Áö ¾Ê½À´Ï´Ù.");
+									p.sendMessage(prefix + "Â§cì´ë¦„ì´ ì´ë¯¸ ì¡´ì¬í•˜ê±°ë‚˜, êµ¬ì—­ ì„¤ì •ì´ ì˜¬ë°”ë¥´ì§€ ì•ŠìŠµë‹ˆë‹¤.");
 								}
 							}else{
-								p.sendMessage(prefix + "¡×cÀÌ¸§À» ÀÔ·ÂÇØÁÖ¼¼¿ä.");
+								p.sendMessage(prefix + "Â§cì´ë¦„ì„ ì…ë ¥í•´ì£¼ì„¸ìš”.");
 							}
 							break;
 						case "delete":
 							if(args.length >= 2) {
-								if(AreaFile.deleteArea(args[1])) {
-									p.sendMessage(prefix + "¡×a±¸¿ªÀ» »èÁ¦ÇÏ¿´½À´Ï´Ù.");
+								if(AreaManager.deleteArea(args[1])) {
+									p.sendMessage(prefix + "Â§aêµ¬ì—­ì„ ì‚­ì œí•˜ì˜€ìŠµë‹ˆë‹¤.");
 								}else{
-									p.sendMessage(prefix + "¡×cÁ¸ÀçÇÏÁö ¾Ê´Â ÀÌ¸§ÀÔ´Ï´Ù.");
+									p.sendMessage(prefix + "Â§cì¡´ì¬í•˜ì§€ ì•ŠëŠ” ì´ë¦„ì…ë‹ˆë‹¤.");
 								}
 							}else{
-								p.sendMessage(prefix + "¡×cÀÌ¸§À» ÀÔ·ÂÇØÁÖ¼¼¿ä.");
+								p.sendMessage(prefix + "Â§cì´ë¦„ì„ ì…ë ¥í•´ì£¼ì„¸ìš”.");
 							}
 							break;
 						case "list":
-							p.sendMessage("¡×f¡×l:: Area list ::");
-							for(Area a : AreaFile.areaArray) {
-								String name = a.getName();
-								List<Location> location = a.getLoc();
-								p.sendMessage("¡×e" + name + " ¡×7(world: " + location.get(0).getWorld().getName() + " " + AreaFile.locationToString(location.get(0)) + " ~ " + AreaFile.locationToString(location.get(1)) + ")");
+							p.sendMessage("Â§fÂ§l:: Area list ::");
+							for(Area area : AreaManager.getAreas()) {
+								String name = area.getName();
+								List<Location> location = area.getLoc();
+								p.sendMessage("Â§e" + name + " Â§7(world: " + location.get(0).getWorld().getName() + " " + AreaManager.locationToString(location.get(0)) + " ~ " + AreaManager.locationToString(location.get(1)) + ")");
 							}
 							break;
 						case "save":
-							AreaFile.saveArea();
-							p.sendMessage(prefix + "¡×a¼º°øÀûÀ¸·Î µ¥ÀÌÅÍ¸¦ ÀúÀåÇÏ¿´½À´Ï´Ù.");
+							AreaManager.saveArea();
+							p.sendMessage(prefix + "Â§aì„±ê³µì ìœ¼ë¡œ ë°ì´í„°ë¥¼ ì €ì¥í•˜ì˜€ìŠµë‹ˆë‹¤.");
 							break;
 						case "load":
-							AreaFile.loadArea();
-							p.sendMessage(prefix + "¡×a¼º°øÀûÀ¸·Î µ¥ÀÌÅÍ¸¦ ºÒ·¯¿Ô½À´Ï´Ù.");
+							AreaManager.loadArea();
+							p.sendMessage(prefix + "Â§aì„±ê³µì ìœ¼ë¡œ ë°ì´í„°ë¥¼ ë¶ˆëŸ¬ì™”ìŠµë‹ˆë‹¤.");
 							break;
 						default:
-							p.sendMessage(prefix + "¡×c¿Ã¹Ù¸£Áö ¾ÊÀº ¸í·É¾îÀÔ´Ï´Ù.");
+							p.sendMessage(prefix + "Â§cì˜¬ë°”ë¥´ì§€ ì•Šì€ ëª…ë ¹ì–´ì…ë‹ˆë‹¤.");
 							break;
 						}
 					}

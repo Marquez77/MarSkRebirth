@@ -10,7 +10,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
 
 import com.marquez.marsk.Area;
-import com.marquez.marsk.AreaFile;
+import com.marquez.marsk.AreaManager;
 import com.marquez.marsk.Locations;
 
 import ch.njol.skript.lang.Expression;
@@ -50,7 +50,7 @@ public class ExprPlayerAreaName extends SimpleExpression<String>{
     	}
     	if(loc == null) return null;
     	List<String> array = new ArrayList<String>();
-    	for(Area area : AreaFile.areaArray) {
+    	for(Area area : AreaManager.getAreas()) {
     		if(Locations.isInPosition(new Locations(area), loc)) {
     			array.add(area.getName());
     		}

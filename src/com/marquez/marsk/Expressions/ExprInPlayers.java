@@ -1,22 +1,21 @@
 package com.marquez.marsk.Expressions;
 
-import ch.njol.skript.lang.util.*;
-import ch.njol.util.*;
-import ch.njol.skript.lang.*;
-
-import com.marquez.marsk.AreaFile;
-import com.marquez.marsk.Locations;
-
-import ch.njol.skript.*;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.event.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.*;
+import javax.annotation.Nullable;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+
+import com.marquez.marsk.AreaManager;
+import com.marquez.marsk.Locations;
+
+import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.util.SimpleExpression;
+import ch.njol.util.Kleenean;
 
 public class ExprInPlayers extends SimpleExpression<Player>{
 	
@@ -32,11 +31,6 @@ public class ExprInPlayers extends SimpleExpression<Player>{
     
     @SuppressWarnings("unchecked")
 	public boolean init(final Expression<?>[] arg0, final int arg1, final Kleenean arg2, final SkriptParser.ParseResult arg3) {
-    	String area = ((Expression<String>)arg0[0]).getSingle(null);
-		if(AreaFile.findArea(area) == -1) {
-			Skript.error("\'" + area + "\' 은(는) 존재하지 않는 이름입니다.");
-			return false;
-		}
 		this.area = (Expression<String>)arg0[0];
         return true;
     }
@@ -48,12 +42,12 @@ public class ExprInPlayers extends SimpleExpression<Player>{
 	@Nullable
     protected Player[] get(final Event arg0) {
     	final String area = this.area.getSingle(arg0);
-    	if(AreaFile.findArea(area) == -1) {
+    	if(AreaManager.findArea(area) == -1) {
 			return null;
 		}
     	List<Player> player = new ArrayList<Player>();
     	for(Player p : Bukkit.getOnlinePlayers()) {
-    		if(Locations.isInPosition(new Locations(AreaFile.foundArea(area)), p.getLocation())) { 
+    		if(Locations.isInPosition(new Locations(AreaManager.foundArea(area)), p.getLocation())) { 
     			player.add(p);
     		}
     	}
