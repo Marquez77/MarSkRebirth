@@ -43,6 +43,7 @@ import com.marquez.marsk.Expressions.ExprGetWebSource;
 import com.marquez.marsk.Expressions.ExprHealthRegenCause;
 import com.marquez.marsk.Expressions.ExprInPlayers;
 import com.marquez.marsk.Expressions.ExprInventoryType;
+import com.marquez.marsk.Expressions.ExprPlayerAreaName;
 import com.marquez.marsk.Expressions.ExprSlotType;
 import com.marquez.marsk.Expressions.ExprSortDown;
 import com.marquez.marsk.Expressions.ExprSortUp;
@@ -154,6 +155,7 @@ public class Main extends JavaPlugin implements Listener
 		Skript.registerExpression((Class)ExprSlotType.class, (Class)String.class, ExpressionType.PROPERTY, new String[] { "slot type" });
 		Skript.registerExpression((Class)ExprInventoryType.class, (Class)String.class, ExpressionType.PROPERTY, new String[] { "inventory type" });
 		Skript.registerExpression((Class)ExprInPlayers.class, (Class)Player.class, ExpressionType.PROPERTY, new String[] { "players in area %string%" });
+		Skript.registerExpression((Class)ExprPlayerAreaName.class, (Class)String.class, ExpressionType.PROPERTY, new String[] { "[entered ]area of (%entity%|%player%|%location%)" });
 		Skript.registerExpression((Class)ExprSortUp.class, (Class)Number.class, ExpressionType.PROPERTY, new String[] { "sort up %numbers%" });
 		Skript.registerExpression((Class)ExprSortDown.class, (Class)Number.class, ExpressionType.PROPERTY, new String[] { "sort down %numbers%" });
 		Skript.registerExpression((Class)ExprDecimal.class, (Class)Number.class, ExpressionType.PROPERTY, new String[] { "decimal with %integer% in %number%" });
@@ -165,7 +167,7 @@ public class Main extends JavaPlugin implements Listener
 
 	public void registerConditions() {
 		Skript.registerCondition((Class)CondIsSymbols.class, new String[] { "%string% contains symbols" });
-		Skript.registerCondition((Class)CondIsInArea.class, new String[] { "%player% is in area %string%" });
+		Skript.registerCondition((Class)CondIsInArea.class, new String[] { "(%entity%|%player%|%location%) is in area %string%" });
 	}
 
 	@EventHandler
