@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerMoveEvent;
 
+import com.marquez.marsk.area.Area;
 import com.marquez.marsk.area.AreaManager;
 import com.marquez.marsk.area.Locations;
 
@@ -24,21 +25,33 @@ public class EvtQuitArea extends SkriptEvent{
 
 	@Override
 	public String toString(@Nullable Event arg0, boolean arg1) {
+		if(area == null) {
+			return "on quit area";
+		}
 		return "on quit area at " + this.area.getSingle(arg0);
 	}
 
 	@Override
 	public boolean check(final Event arg0) {
-		String area = (String)this.area.getSingle(arg0);
-		if(AreaManager.findArea(area) == -1) {
-			return false;
-		}
-		return this.area.check(arg0, new Checker<String>() {
-			@Override
-			public boolean check(String area) {
-				return LocContains(area, (((PlayerMoveEvent)arg0).getPlayer()));
+		if(this.area == null) {
+			PlayerMoveEvent event = (PlayerMoveEvent)arg0;
+			Player p = event.getPlayer();
+			for(Area area : AreaManager.getAreas()) {
+				if(LocContains(area.getName(), p)) return true;
 			}
-		});
+			return false;
+		}else {
+			String area = (String)this.area.getSingle(arg0);
+			if(AreaManager.findArea(area) == -1) {
+				return false;
+			}
+			return this.area.check(arg0, new Checker<String>() {
+				@Override
+				public boolean check(String area) {
+					return LocContains(area, (((PlayerMoveEvent)arg0).getPlayer()));
+				}
+			});
+		}
 	}
 
 	@SuppressWarnings("unchecked")

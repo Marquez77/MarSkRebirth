@@ -62,7 +62,7 @@ public class ScriptsComplete implements TabCompleter{
 					if(file.getParentFile().equals(folder)) {
 						result.add(name.replaceFirst("-", ""));
 					}else {
-						result.add(file.getParent().replace(folder.getPath() + "\\", "") + "/" + file.getName().replace(".sk", "").replaceFirst("-", ""));
+						result.add(file.getParent().replace(folder.getPath() + "\\", "").replace("\\", "/") + "/" + file.getName().replace(".sk", "").replaceFirst("-", ""));
 					}
 				}
 			}

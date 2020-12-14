@@ -21,6 +21,4 @@ public class AreaNameComplete implements TabCompleter{
 		return null;
 	}
 	
-	
-
 }
