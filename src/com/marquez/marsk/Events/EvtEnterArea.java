@@ -9,8 +9,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-import com.marquez.marsk.AreaManager;
-import com.marquez.marsk.Locations;
+import com.marquez.marsk.area.AreaManager;
+import com.marquez.marsk.area.Locations;
 
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.Literal;

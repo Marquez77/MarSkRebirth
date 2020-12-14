@@ -1,4 +1,4 @@
-package com.marquez.marsk;
+package com.marquez.marsk.area;
 
 import java.util.HashMap;
 import java.util.List;

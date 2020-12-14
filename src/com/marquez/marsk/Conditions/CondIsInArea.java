@@ -6,8 +6,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
 
-import com.marquez.marsk.AreaManager;
-import com.marquez.marsk.Locations;
+import com.marquez.marsk.area.AreaManager;
+import com.marquez.marsk.area.Locations;
 
 import ch.njol.skript.lang.Condition;
 import ch.njol.skript.lang.Expression;

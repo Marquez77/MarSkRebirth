@@ -49,6 +49,9 @@ import com.marquez.marsk.Expressions.ExprSortUp;
 import com.marquez.marsk.Jump.EvtJump;
 import com.marquez.marsk.Jump.JumpListener;
 import com.marquez.marsk.Jump.PlayerJumpEvent;
+import com.marquez.marsk.area.AreaManager;
+import com.marquez.marsk.cmds.AreaNameComplete;
+import com.marquez.marsk.cmds.MCommand;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.ExpressionType;
@@ -57,11 +60,11 @@ import ch.njol.skript.registrations.EventValues;
 import ch.njol.skript.util.Getter;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class Main extends JavaPlugin implements Listener
+public class MarSk extends JavaPlugin implements Listener
 {
 	public static String prefix = "§f§l[MarSkRebirth]";
 
-	public static Main instance;
+	public static MarSk instance;
 	public static String version;
 	public MCommand command;
 	public String[] update;
@@ -108,8 +111,8 @@ public class Main extends JavaPlugin implements Listener
 				return n;
 			}
 		}, 0);
-		Skript.registerEvent("enter area", (Class)EvtEnterArea.class, (Class)PlayerMoveEvent.class, new String[] { "(enter|join) area at %string%" });
-		Skript.registerEvent("quit area", (Class)EvtQuitArea.class, (Class)PlayerMoveEvent.class, new String[] { "(exit|quit|leave) area at %string%" });
+		Skript.registerEvent("enter area", (Class)EvtEnterArea.class, (Class)PlayerMoveEvent.class, new String[] { "(enter|join) area[ at %string%]" });
+		Skript.registerEvent("quit area", (Class)EvtQuitArea.class, (Class)PlayerMoveEvent.class, new String[] { "(exit|quit|leave) area[ at %string%]" });
 		Skript.registerEvent("mar.jump", (Class)EvtJump.class, (Class)PlayerJumpEvent.class, new String[] { "[mar.]jump" });
 		EventValues.registerEventValue((Class)PlayerJumpEvent.class, (Class)Player.class, (Getter)new Getter<Player, PlayerJumpEvent>() {
 			public Player get(final PlayerJumpEvent e) {
@@ -207,7 +210,7 @@ public class Main extends JavaPlugin implements Listener
 			}, 40L);
 		}
 	}
-	protected static String[] updateCheck() {
+	public static String[] updateCheck() {
 		try {
 			URL url = new URL("http://marquezupdate.zz.am");
 			HttpURLConnection uc = (HttpURLConnection)url.openConnection();

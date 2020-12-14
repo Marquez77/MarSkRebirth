@@ -15,14 +15,14 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 
-import com.marquez.marsk.Main;
+import com.marquez.marsk.MarSk;
 
 public class JumpListener implements Listener
 {
-    Main main;
+    MarSk main;
     public HashMap<Player, Long> cooldown;
     
-    public JumpListener(final Main core) {
+    public JumpListener(final MarSk core) {
         this.cooldown = new HashMap<Player, Long>();
         core.getServer().getPluginManager().registerEvents((Listener)this, (Plugin)core);
     }

@@ -9,8 +9,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-import com.marquez.marsk.AreaManager;
-import com.marquez.marsk.Locations;
+import com.marquez.marsk.area.AreaManager;
+import com.marquez.marsk.area.Locations;
 
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.Literal;
@@ -44,6 +44,7 @@ public class EvtQuitArea extends SkriptEvent{
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean init(Literal<?>[] arg0, int arg1, ParseResult arg2) {
+		System.out.println(arg0[0]);
 		this.area = (Expression<String>)arg0[0];
 		return true;
 	}

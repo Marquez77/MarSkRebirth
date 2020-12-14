@@ -1,4 +1,4 @@
-﻿package com.marquez.marsk;
+﻿package com.marquez.marsk.cmds;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +10,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.marquez.marsk.MarSk;
+import com.marquez.marsk.area.Area;
+import com.marquez.marsk.area.AreaManager;
+
 public class MCommand implements CommandExecutor{
 	
 	public static HashMap<Player, List<Location>> hash = new HashMap<Player, List<Location>>();
@@ -19,26 +23,26 @@ public class MCommand implements CommandExecutor{
 		if(sender instanceof Player) {
 			Player p = (Player)sender;
 			if(label.equalsIgnoreCase("marsk")) {
-				String[] update = Main.updateCheck();
-				if(update[0].equals(Main.version)) update = null;
+				String[] update = MarSk.updateCheck();
+				if(update[0].equals(MarSk.version)) update = null;
 				if(p.isOp() && update != null) {
-					p.sendMessage(prefix + "§b§lMarSkRebirth의 최신버전이 존재합니다!");
-					p.sendMessage(prefix + "§a최신버전§7:§ev" + update[0] + " §c현재버전§7:§ev" + Main.version);
-					p.sendMessage(prefix + "§6다운로드 링크 §7: §f" + update[1]);
+					p.sendMessage(prefix + "§b§lMarSkRebirth§f의 최신버전이 존재합니다!");
+					p.sendMessage(prefix + "§a최신버전§7:§ev" + update[0] + " §c현재버전§7:§ev" + MarSk.version);
+					p.sendMessage(prefix + "§f다운로드 링크 §7: §f" + update[1]);
 					p.sendMessage(prefix + "§7(해당 메세지는 OP에게만 출력됩니다)");
 				}else {
-					p.sendMessage(prefix + "§a현재버전§7:§ev" + Main.version);
+					p.sendMessage(prefix + "§a현재버전§7:§ev" + MarSk.version);
 				}
 			}
 			if(label.equalsIgnoreCase("ska")) {
 				if(p.isOp()) {
 					if(args.length == 0) {
-						p.sendMessage(prefix + "§f§l/ska select §7§l- 구역을 선택합니다. [On/Off]");
-						p.sendMessage(prefix + "§f§l/ska create [이름] §7§l- 구역을 생성합니다.");
-						p.sendMessage(prefix + "§f§l/ska delete [이름] §7§l- 구역을 삭제합니다.");
-						p.sendMessage(prefix + "§f§l/ska list §7§l- 목록을 확인합니다.");
-						p.sendMessage(prefix + "§f§l/ska save §7§l- 데이터를 저장합니다.");
-						p.sendMessage(prefix + "§f§l/ska load §7§l- 데이터를 불러옵니다.");
+						p.sendMessage(prefix + "§f/ska select §7- 구역을 선택합니다. [On/Off]");
+						p.sendMessage(prefix + "§f/ska create [이름] §7- 구역을 생성합니다.");
+						p.sendMessage(prefix + "§f/ska delete [이름] §7- 구역을 삭제합니다.");
+						p.sendMessage(prefix + "§f/ska list §7- 목록을 확인합니다.");
+						p.sendMessage(prefix + "§f/ska save §7- 데이터를 저장합니다.");
+						p.sendMessage(prefix + "§f/ska load §7- 데이터를 불러옵니다.");
 					}else{
 						switch(args[0]) {
 						case "select":
@@ -88,11 +92,16 @@ public class MCommand implements CommandExecutor{
 							}
 							break;
 						case "list":
-							p.sendMessage("§f§l:: Area list ::");
-							for(Area area : AreaManager.getAreas()) {
-								String name = area.getName();
-								List<Location> location = area.getLoc();
-								p.sendMessage("§e" + name + " §7(world: " + location.get(0).getWorld().getName() + " " + AreaManager.locationToString(location.get(0)) + " ~ " + AreaManager.locationToString(location.get(1)) + ")");
+							if(AreaManager.getAreas().isEmpty()) {
+								p.sendMessage(prefix + "§c생성된 구역이 없습니다.");
+							}else {
+								p.sendMessage("§f구역 목록");
+								int i = 0;
+								for(Area area : AreaManager.getAreas()) {
+									String name = area.getName();
+									List<Location> location = area.getLoc();
+									p.sendMessage("§f[" + ++i + "] §e" + name + " §7(world: " + location.get(0).getWorld().getName() + " " + AreaManager.locationToString(location.get(0)) + " ~ " + AreaManager.locationToString(location.get(1)) + ")");
+								}
 							}
 							break;
 						case "save":

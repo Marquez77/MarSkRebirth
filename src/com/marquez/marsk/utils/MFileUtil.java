@@ -1,4 +1,4 @@
-package com.marquez.marsk;
+package com.marquez.marsk.utils;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

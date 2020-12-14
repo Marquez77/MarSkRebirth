@@ -4,7 +4,7 @@ import javax.annotation.Nullable;
 
 import org.bukkit.event.Event;
 
-import com.marquez.marsk.AreaManager;
+import com.marquez.marsk.area.AreaManager;
 
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;

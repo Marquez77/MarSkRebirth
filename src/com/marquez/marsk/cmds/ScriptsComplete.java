@@ -1,21 +1,20 @@
-package com.marquez.marsk;
+package com.marquez.marsk.cmds;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.util.StringUtil;
 
-public class AreaNameComplete implements TabCompleter{
+import com.marquez.marsk.area.AreaManager;
+
+public class ScriptsComplete implements TabCompleter{
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
 		if(args[0].equals("delete")) {
-			final List<String> completions = new ArrayList<>();
-	        StringUtil.copyPartialMatches(args[0], AreaManager.getAreaNames(), completions);
+			List<String> completions = AreaManager.getAreaNames();
 	        Collections.sort(completions);
 	        return completions;
 		}
