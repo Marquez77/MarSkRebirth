@@ -3,7 +3,6 @@ Events:
   onEnterArea: true
   onLeaveArea: true
   onJump: true
-  onInventoryOpen: true
   onArmorEquip: true
   onArmorUnequip: true
 Effects:

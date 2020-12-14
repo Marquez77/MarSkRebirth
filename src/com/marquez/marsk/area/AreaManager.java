@@ -13,6 +13,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import com.marquez.marsk.MarSk;
+
 public class AreaManager {
 	
 	private static List<Area> areaArray = new ArrayList<Area>();
@@ -66,7 +68,7 @@ public class AreaManager {
 	}
 	
 	public static void saveArea() {
-		File filename = new File("plugins/Skript/Area.sk");
+		File filename = new File(MarSk.instance.getDataFolder(), "area.sk");
 		try{
 			if(filename.exists()) {
 				filename.createNewFile();
@@ -84,7 +86,7 @@ public class AreaManager {
 	
 	public static void loadArea() {
 		areaArray.clear();
-		File filename = new File("plugins/Skript/Area.sk");
+		File filename = new File(MarSk.instance.getDataFolder(), "area.sk");
 		if(filename.exists()) {
 			try {
 				BufferedReader r = new BufferedReader(new FileReader(filename));

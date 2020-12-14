@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -155,17 +154,8 @@ public class MarSk extends JavaPlugin implements Listener {
 			}, 0);
 			new JumpListener(this);
 		}
-		if(getOptions("Events.onInventoryOpen")) {
-			Skript.registerEvent("mar.inventory open", (Class)SimpleEvent.class, (Class)InventoryOpenEvent.class, new String[] { "[mar.]inventory open" });
-			EventValues.registerEventValue((Class)InventoryOpenEvent.class, (Class)Player.class, (Getter)new Getter<Player, InventoryOpenEvent>() {
-				public Player get(final InventoryOpenEvent e) {
-					final Player p = (Player)e.getPlayer();
-					return p;
-				}
-			}, 0);
-		}
 		if(getOptions("Events.onArmorEquip")) {
-			Skript.registerEvent("armor equip", (Class)SimpleEvent.class, (Class)ArmorEquipEvent.class, new String[] { "(armor|armour) equip" });
+			Skript.registerEvent("armor equip", (Class)SimpleEvent.class, (Class)ArmorEquipEvent.class, new String[] { "[mar.](armor|armour) equip" });
 			EventValues.registerEventValue((Class)ArmorEquipEvent.class, (Class)ItemStack.class, (Getter)new Getter<ItemStack, ArmorEquipEvent>() {
 				public ItemStack get(final ArmorEquipEvent e) {
 					final ItemStack item = e.getItem();
@@ -175,7 +165,7 @@ public class MarSk extends JavaPlugin implements Listener {
 			new ArmorEquipListener(null, (Plugin)this);
 		}
 		if(getOptions("Events.onArmorUnequip")) {
-			Skript.registerEvent("armor unequip", (Class)SimpleEvent.class, (Class)ArmorUnEquipEvent.class, new String[] { "(armor|armour) unequip" });
+			Skript.registerEvent("armor unequip", (Class)SimpleEvent.class, (Class)ArmorUnEquipEvent.class, new String[] { "[mar.](armor|armour) unequip" });
 			EventValues.registerEventValue((Class)ArmorUnEquipEvent.class, (Class)ItemStack.class, (Getter)new Getter<ItemStack, ArmorUnEquipEvent>() {
 				public ItemStack get(final ArmorUnEquipEvent e) {
 					final ItemStack item = e.getItem();
@@ -193,7 +183,7 @@ public class MarSk extends JavaPlugin implements Listener {
 	}
 
 	public void registerExpressions() {
-		if(getOptions("Expressions.onHealthRegen")) Skript.registerExpression((Class)ExprHealthRegenCause.class, (Class)String.class, ExpressionType.PROPERTY, new String[] { "regen cause" });
+		if(getOptions("Events.onHealthRegen")) Skript.registerExpression((Class)ExprHealthRegenCause.class, (Class)String.class, ExpressionType.PROPERTY, new String[] { "regen cause" });
 		if(getOptions("Expressions.AreaInPlayers")) Skript.registerExpression((Class)ExprInPlayers.class, (Class)Player.class, ExpressionType.PROPERTY, new String[] { "players in area %string%" });
 		if(getOptions("Expressions.EnteredAreaName")) Skript.registerExpression((Class)ExprPlayerAreaName.class, (Class)String.class, ExpressionType.PROPERTY, new String[] { "[entered ]area of %location%" });
 		if(getOptions("Events.onEnterArea") || getOptions("Events.onLeaveArea")) Skript.registerExpression((Class)ExprEventArea.class, (Class)String.class, ExpressionType.PROPERTY, new String[] { "event-area" });
