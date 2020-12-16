@@ -1,8 +1,5 @@
 package com.marquez.marsk.effects;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.annotation.Nullable;
 
 import org.bukkit.Location;
@@ -17,14 +14,14 @@ import ch.njol.util.Kleenean;
 
 public class EffCreateArea extends Effect{
 	private Expression<String> name;
-	private Expression<Location> loc1;
-	private Expression<Location> loc2;
+	private Expression<Location> pos1;
+	private Expression<Location> pos2;
     
     @SuppressWarnings("unchecked")
 	public boolean init(final Expression<?>[] arg0, final int arg1, final Kleenean arg2, final SkriptParser.ParseResult arg3) {
     	this.name = (Expression<String>)arg0[0];
-        this.loc1 = (Expression<Location>)arg0[1];
-        this.loc2 = (Expression<Location>)arg0[2];
+        this.pos1 = (Expression<Location>)arg0[1];
+        this.pos2 = (Expression<Location>)arg0[2];
         return true;
     }
     
@@ -34,9 +31,8 @@ public class EffCreateArea extends Effect{
     
     protected void execute(final Event arg0) {
     	final String name = (String)this.name.getSingle(arg0);
-    	final Location loc1 = (Location)this.loc1.getSingle(arg0);
-    	final Location loc2 = (Location)this.loc2.getSingle(arg0);
-    	List<Location> locs = Arrays.asList(loc1, loc2);
-    	AreaManager.createArea(name, locs);
+    	final Location pos1 = (Location)this.pos1.getSingle(arg0);
+    	final Location pos2 = (Location)this.pos2.getSingle(arg0);
+    	AreaManager.createArea(name, new Location[] { pos1, pos2 });
     }
 }

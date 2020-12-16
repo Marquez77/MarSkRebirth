@@ -31,10 +31,10 @@ public class AreaManager {
 		return array;
 	}
 
-	public static boolean createArea(String name, List<Location> location) {
-		if(location.get(0).getWorld().equals(location.get(1).getWorld())
+	public static boolean createArea(String name, Location[] locations) {
+		if(locations[0].getWorld().equals(locations[1].getWorld())
 				&& findArea(name) == -1) {
-			areaArray.add(new Area(name, location));
+			areaArray.add(new Area(name, locations));
 			return true;
 		}
 		return false;
@@ -76,7 +76,7 @@ public class AreaManager {
 			BufferedWriter w = new BufferedWriter(new FileWriter(filename));
 			StringBuilder sb = new StringBuilder();
 			for(Area a : areaArray) {
-				sb.append(areaToText(a.getName(), a.getLoc()));
+				sb.append(areaToText(a.getName(), a.getLocations()));
 			}
 			w.append(sb);
 			w.flush();
@@ -100,10 +100,10 @@ public class AreaManager {
 						String name = list.get(i*3).replace(":", "");
 						World w = Bukkit.getWorld(list.get(i*3+1).replace("world: ", ""));
 						String[] split = list.get(i*3+2).replace("location: ", "").split(" ~ ");
-						List<Location> location = new ArrayList<Location>();
-						location.add(stringToLocation(w, split[0]));
-						location.add(stringToLocation(w, split[1]));
-						areaArray.add(new Area(name, location));
+						Location[] locations = new Location[2];
+						locations[0] = stringToLocation(w, split[0]);
+						locations[1] = stringToLocation(w, split[1]);
+						areaArray.add(new Area(name, locations));
 					}
 				}
 				r.close();
@@ -111,11 +111,11 @@ public class AreaManager {
 		}
 	}
 	
-	public static String areaToText(String name, List<Location> location) {
+	public static String areaToText(String name, Location[] locations) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(name).append(":\r\n");
-		sb.append("\tworld: ").append(location.get(0).getWorld().getName()).append("\r\n");
-		sb.append("\tlocation: ").append(locationToString(location.get(0))).append(" ~ ").append(locationToString(location.get(1))).append("\r\n");
+		sb.append("\tworld: ").append(locations[0].getWorld().getName()).append("\r\n");
+		sb.append("\tlocation: ").append(locationToString(locations[0])).append(" ~ ").append(locationToString(locations[1])).append("\r\n");
 		return sb.toString();
 	}
 	

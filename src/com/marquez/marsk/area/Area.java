@@ -1,16 +1,14 @@
 package com.marquez.marsk.area;
 
-import java.util.List;
-
 import org.bukkit.Location;
 
 public class Area {
 	private String name;
-	private List<Location> loc;
+	private Location[] locations;
 	
-	public Area(String name, List<Location> loc) {
+	public Area(String name, Location[] locations) {
 		this.name = name;
-		this.loc = loc;
+		this.locations = locations;
 	}
 
 	public String getName() {
@@ -21,11 +19,11 @@ public class Area {
 		this.name = name;
 	}
 
-	public List<Location> getLoc() {
-		return loc;
+	public Location[] getLocations() {
+		return locations;
 	}
 
-	public void setLoc(List<Location> loc) {
-		this.loc = loc;
+	public void setLocations(Location[] locations) {
+		this.locations = locations;
 	}
 }

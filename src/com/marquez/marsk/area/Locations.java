@@ -13,8 +13,8 @@ public class Locations{
 	public Location pos2;
 
 	public Locations(Area area) {
-		Location pos1 = area.getLoc().get(0);
-		Location pos2 = area.getLoc().get(1);
+		Location pos1 = area.getLocations()[0];
+		Location pos2 = area.getLocations()[1];
 		int[] x = swap((int) pos1.getX(), (int) pos2.getX());
 		int[] y = swap((int) pos1.getY(), (int) pos2.getY());
 		int[] z = swap((int) pos1.getZ(), (int) pos2.getZ());

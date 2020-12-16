@@ -1,10 +1,10 @@
 ﻿package com.marquez.marsk.cmds;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -17,7 +17,7 @@ import com.marquez.marsk.area.AreaManager;
 
 public class MCommand implements CommandExecutor{
 
-	public static HashMap<Player, List<Location>> hash = new HashMap<Player, List<Location>>();
+	public static HashMap<CommandSender, Location[]> hash = new HashMap<CommandSender, Location[]>();
 	public static String prefix = "§b§l[MarSkRebirth] ";
 
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -37,6 +37,8 @@ public class MCommand implements CommandExecutor{
 			if(sender.isOp()) {
 				if(args.length == 0) {
 					sender.sendMessage(prefix + "§f/ska sel(ect) §7- 구역을 선택합니다. [On/Off]");
+					sender.sendMessage(prefix + "§f/ska pos1 [x,y,z|x y z] (world) §7- 첫번째 지점을 선택합니다.");
+					sender.sendMessage(prefix + "§f/ska pos2 [x,y,z|x y z] (world) §7- 두번째 지점을 선택합니다.");
 					sender.sendMessage(prefix + "§f/ska create [이름] §7- 구역을 생성합니다.");
 					sender.sendMessage(prefix + "§f/ska del(ete) [이름] §7- 구역을 삭제합니다.");
 					sender.sendMessage(prefix + "§f/ska list §7- 목록을 확인합니다.");
@@ -48,11 +50,8 @@ public class MCommand implements CommandExecutor{
 					case "select": {
 						if(!(sender instanceof Player)) break;
 						Player p = (Player)sender;
-						if(hash.get(p) == null) {
-							List<Location> location = new ArrayList<Location>();
-							location.add(null);
-							location.add(null);
-							hash.put(p, location);
+						if(!hash.containsKey(p)) {
+							hash.put(p, new Location[2]);
 							p.sendMessage(prefix + "§e맨손으로 우클릭, 좌클릭을 하여 구역을 설정해주세요.");
 						}else{
 							hash.remove(p);
@@ -60,18 +59,49 @@ public class MCommand implements CommandExecutor{
 						}
 						break;
 					}
+					case "pos1":
+					case "pos2": {
+						int nth = Integer.parseInt(args[0].replace("pos", ""))-1;
+						Location[] locations;
+						if(!hash.containsKey(sender)) {
+							locations = new Location[2];
+						}else locations = hash.get(sender);
+						if(args.length > 3 && args.length < 6) {
+							World world = sender instanceof Player && args.length == 4 ? ((Player)sender).getWorld() : args.length == 4 ? null : Bukkit.getWorld(args[4]);
+							if(world == null) {
+								sender.sendMessage(prefix + "§c존재하지 않는 월드입니다.");
+								break;
+							}
+							locations[nth] = new Location(world, Integer.parseInt(args[1].contains(",") ? args[1].replace(",", "") : args[1]), Integer.parseInt(args[2].contains(",") ? args[2].replace(",", "") : args[2]), Integer.parseInt(args[3].contains(",") ? args[3].replace(",", "") : args[3]));
+							hash.put(sender, locations);
+						}else if(args.length > 1 && args[1].contains(",")) {
+							String[] splited = args[1].split(",");
+							World world = sender instanceof Player && args.length == 2 ? ((Player)sender).getWorld() : args.length == 2 ? null : Bukkit.getWorld(args[2]);
+							if(world == null) {
+								sender.sendMessage(prefix + "§c존재하지 않는 월드입니다.");
+								break;
+							}
+							locations[nth] = new Location(world, Integer.parseInt(splited[0]), Integer.parseInt(splited[1]), Integer.parseInt(splited[2]));
+							hash.put(sender, locations);
+						}else {
+							sender.sendMessage(prefix + "§c명령어 인자가 올바르지 않습니다.");
+							break;
+						}
+						sender.sendMessage(MCommand.prefix + "§e위치 " + (nth+1) + ": " + AreaManager.locationToString(locations[nth]));
+						break;
+					}
 					case "create": {
 						if(!(sender instanceof Player)) break;
 						Player p = (Player)sender;
 						if(args.length >= 2) {
-							if(hash.get(p) == null) {
+							if(!hash.containsKey(p)) {
 								p.sendMessage(prefix + "§c위치를 지정하지 않았습니다.");
 								break;
 							}
-							if(hash.get(p).get(0) == null) {
+							if(hash.get(p)[0] == null) {
 								p.sendMessage(prefix + "§c위치 1이 지정되지 않았습니다.");
 								break;
-							}else if(hash.get(p).get(1) == null) {
+							}else if(hash.get(p)[1] == null) {
 								p.sendMessage(prefix + "§c위치 2가 지정되지 않았습니다.");
 								break;
 							}
@@ -106,8 +136,8 @@ public class MCommand implements CommandExecutor{
 							int i = 0;
 							for(Area area : AreaManager.getAreas()) {
 								String name = area.getName();
-								List<Location> location = area.getLoc();
-								sender.sendMessage("§f[" + ++i + "] §e" + name + " §7(world: " + location.get(0).getWorld().getName() + " " + AreaManager.locationToString(location.get(0)) + " ~ " + AreaManager.locationToString(location.get(1)) + ")");
+								Location[] locations = area.getLocations();
+								sender.sendMessage("§f[" + ++i + "] §e" + name + " §7(world: " + locations[0].getWorld().getName() + " " + AreaManager.locationToString(locations[0]) + " ~ " + AreaManager.locationToString(locations[1]) + ")");
 							}
 						}
 						break;
