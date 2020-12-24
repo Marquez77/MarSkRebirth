@@ -145,7 +145,7 @@ public class MarSk extends JavaPlugin implements Listener {
 			}, 0);
 		}
 		if(getOptions("Events.onJump")) {
-			Skript.registerEvent("mar.jump", (Class)EvtJump.class, (Class)PlayerJumpEvent.class, new String[] { "[mar.]jump" });
+			Skript.registerEvent("mar.jump", (Class)EvtJump.class, (Class)PlayerJumpEvent.class, new String[] { "[mar.]jump [air %boolean%]" });
 			EventValues.registerEventValue((Class)PlayerJumpEvent.class, (Class)Player.class, (Getter)new Getter<Player, PlayerJumpEvent>() {
 				public Player get(final PlayerJumpEvent e) {
 					final Player p = (Player)e.getPlayer();

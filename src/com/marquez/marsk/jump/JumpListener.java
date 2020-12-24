@@ -32,22 +32,14 @@ public class JumpListener implements Listener
         if (!event.getPlayer().isFlying() && event.getPlayer().getGameMode() != GameMode.CREATIVE && event.getFrom().getY() + 0.5 != event.getTo().getY() && event.getFrom().getY() + 0.419 < event.getTo().getY()) {
             final Location loc = event.getFrom();
             loc.setY(event.getFrom().getY() - 1.0);
-            if (loc.getBlock().getType() != Material.AIR) {
-                if (!this.cooldown.containsKey(event.getPlayer())) {
-                    this.cooldown.put(event.getPlayer(), System.currentTimeMillis() + 350L);
-                    final PlayerJumpEvent evt = new PlayerJumpEvent(event.isCancelled(), event.getPlayer());
-                    Bukkit.getPluginManager().callEvent((Event)evt);
-                    if (evt.isCancelled()) {
-                        event.setCancelled(true);
-                    }
-                }
-                else if (this.cooldown.get(event.getPlayer()) <= System.currentTimeMillis()) {
-                    this.cooldown.put(event.getPlayer(), System.currentTimeMillis() + 350L);
-                    final PlayerJumpEvent evt = new PlayerJumpEvent(event.isCancelled(), event.getPlayer());
-                    Bukkit.getPluginManager().callEvent((Event)evt);
-                    if (evt.isCancelled()) {
-                        event.setCancelled(true);
-                    }
+            
+            if (!this.cooldown.containsKey(event.getPlayer()) || this.cooldown.get(event.getPlayer()) <= System.currentTimeMillis()) {
+                this.cooldown.put(event.getPlayer(), System.currentTimeMillis() + 350L);
+                final PlayerJumpEvent evt = new PlayerJumpEvent(event.isCancelled(), event.getPlayer());
+                evt.setAirJump(loc.getBlock().getType() == Material.AIR);
+                Bukkit.getPluginManager().callEvent((Event)evt);
+                if (evt.isCancelled()) {
+                    event.setCancelled(true);
                 }
             }
         }

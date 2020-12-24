@@ -1,6 +1,6 @@
 name: MarSkRebirth
 main: com.marquez.marsk.MarSk
-version: 1.0.0
+version: 1.0.1
 depend: [Skript]
 commands:
   marsk:

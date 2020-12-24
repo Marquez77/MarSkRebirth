@@ -9,6 +9,8 @@ import ch.njol.skript.lang.SkriptEvent;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 
 public class EvtJump extends SkriptEvent{
+	
+	private Literal<Boolean> airJump;
 
 	@Override
 	public String toString(@Nullable Event arg0, boolean arg1) {
@@ -17,11 +19,16 @@ public class EvtJump extends SkriptEvent{
 
 	@Override
 	public boolean check(final Event arg0) {
-		return true;
+		PlayerJumpEvent e = (PlayerJumpEvent)arg0;
+		boolean airJump = false;
+		if(this.airJump != null) airJump = this.airJump.getSingle(arg0);
+		return airJump == e.isAirJump();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean init(Literal<?>[] arg0, int arg1, ParseResult arg2) {
+		this.airJump = (Literal<Boolean>)arg0[0];
 		return true;
 	}
 }
