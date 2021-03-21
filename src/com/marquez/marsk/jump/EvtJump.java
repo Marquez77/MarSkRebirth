@@ -22,7 +22,7 @@ public class EvtJump extends SkriptEvent{
 		PlayerJumpEvent e = (PlayerJumpEvent)arg0;
 		boolean airJump = false;
 		if(this.airJump != null) airJump = this.airJump.getSingle(arg0);
-		return airJump == e.isAirJump();
+		return e.isAirJump() == true ? airJump : true;
 	}
 
 	@SuppressWarnings("unchecked")

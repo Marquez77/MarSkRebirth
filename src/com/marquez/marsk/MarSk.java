@@ -80,7 +80,7 @@ public class MarSk extends JavaPlugin implements Listener {
 		this.registerExpressions();
 		this.registerConditions();
 		registercommand();
-		AreaManager.loadArea();
+		Bukkit.getScheduler().runTask(this, () -> { AreaManager.loadArea(); });
 		Bukkit.getConsoleSender().sendMessage(prefix + " §a에드온 연결 완료 §8-Made by Mar(마르)");
 	}
 
