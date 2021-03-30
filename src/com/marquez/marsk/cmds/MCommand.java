@@ -22,16 +22,18 @@ public class MCommand implements CommandExecutor{
 
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(label.equalsIgnoreCase("marsk") && MarSk.getOptions("UpdateCheck")) {
-			String[] update = Checker.updateCheck();
-			if(update[0].equals(MarSk.version)) update = null;
-			if(sender.isOp() && update != null) {
-				sender.sendMessage(prefix + "§b§lMarSkRebirth§f의 최신버전이 존재합니다!");
-				sender.sendMessage(prefix + "§a최신버전§7:§ev" + update[0] + " §c현재버전§7:§ev" + MarSk.version);
-				sender.sendMessage(prefix + "§f다운로드 링크 §7: §f" + update[1]);
-				sender.sendMessage(prefix + "§7(해당 메세지는 OP에게만 출력됩니다)");
-			}else {
-				sender.sendMessage(prefix + "§a현재버전§7:§ev" + MarSk.version);
-			}
+			Bukkit.getScheduler().runTaskAsynchronously(MarSk.instance, () -> {
+				String[] update = Checker.updateCheck();
+				if(update != null && update[0].equals(MarSk.version)) update = null;
+				if(sender.isOp() && update != null) {
+					sender.sendMessage(prefix + "§b§lMarSkRebirth§f의 최신버전이 존재합니다!");
+					sender.sendMessage(prefix + "§a최신버전§7:§ev" + update[0] + " §c현재버전§7:§ev" + MarSk.version);
+					sender.sendMessage(prefix + "§f다운로드 링크 §7: §f" + update[1]);
+					sender.sendMessage(prefix + "§7(해당 메세지는 OP에게만 출력됩니다)");
+				}else {
+					sender.sendMessage(prefix + "§a현재버전§7:§ev" + MarSk.version);
+				}
+			});
 		}
 		if(label.equalsIgnoreCase("ska")) {
 			if(sender.isOp()) {

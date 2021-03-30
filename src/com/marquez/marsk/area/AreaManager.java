@@ -68,6 +68,7 @@ public class AreaManager {
 	}
 	
 	public static void saveArea() {
+		if(!loaded) return;
 		File filename = new File(MarSk.instance.getDataFolder(), "area.sk");
 		try{
 			if(filename.exists()) {
@@ -83,6 +84,8 @@ public class AreaManager {
 			w.close();
 		}catch(IOException e) {}
 	}
+	
+	private static boolean loaded = false;
 	
 	public static void loadArea() {
 		areaArray.clear();
@@ -109,6 +112,7 @@ public class AreaManager {
 				r.close();
 			} catch (IOException e) {}
 		}
+		loaded = true;
 	}
 	
 	public static String areaToText(String name, Location[] locations) {
