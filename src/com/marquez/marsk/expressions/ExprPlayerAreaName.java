@@ -42,7 +42,6 @@ public class ExprPlayerAreaName extends SimpleExpression<String>{
 	@Nullable
 	protected String[] get(final Event arg0) {
 		Location location = this.location.getSingle(arg0);
-		System.out.println(this.location);
 		List<String> array = new ArrayList<String>();
 		for(Area area : AreaManager.getAreas()) {
 			if(Locations.isInPosition(new Locations(area), location)) {
